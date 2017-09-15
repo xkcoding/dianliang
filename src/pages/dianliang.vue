@@ -72,10 +72,10 @@
     },
     computed: {
       fdTarget () {
-        return '-'
+        return 1234
       },
       fdTotal () {
-        return '-'
+        return 123
       },
       fdPercent () {
         if (!this.$lodash.isNumber(this.fdTarget) || !this.$lodash.isNumber(this.fdTotal)) {
@@ -88,10 +88,10 @@
         }
       },
       dlTarget () {
-        return '-'
+        return 12
       },
       dlTotal () {
-        return '-'
+        return 1
       },
       dlPercent () {
         if (!this.$lodash.isNumber(this.dlTarget) || !this.$lodash.isNumber(this.dlTotal)) {
