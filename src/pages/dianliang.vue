@@ -34,16 +34,14 @@
     <div class="content-wrapper">
       <div class="content">
         <div class="map-wrapper">
-          <ponit-map></ponit-map>
+          <heatmap></heatmap>
         </div>
       </div>
       <div class="content">
         <div class="chart-wrapper">
           <div class="chart">
             <div class="bar-wrapper">
-              <div id="bar" class="bar">
-                <!--<ve-histogram height="280px" :data="barData" :settings="barOptions"></ve-histogram>-->
-              </div>
+              <bar></bar>
             </div>
           </div>
           <div class="chart">
@@ -51,6 +49,7 @@
               <div id="line" class="line">
                 <!--<ve-line height="280px" :data="lineData" :settings="lineOptions"></ve-line>-->
               </div>
+              <v-line></v-line>
             </div>
           </div>
         </div>
@@ -60,7 +59,9 @@
 </template>
 
 <script type="text/ecmascript-6">
-  import PonitMap from 'components/map/point-map'
+  import heatmap from 'components/map/heatmap'
+  import bar from 'components/bar/bar'
+  import line from 'components/line/line'
 
   export default {
     name: 'DL',
@@ -71,10 +72,10 @@
     },
     computed: {
       fdTarget () {
-        return 1234
+        return '-'
       },
       fdTotal () {
-        return 123
+        return '-'
       },
       fdPercent () {
         if (!this.$lodash.isNumber(this.fdTarget) || !this.$lodash.isNumber(this.fdTotal)) {
@@ -87,10 +88,10 @@
         }
       },
       dlTarget () {
-        return 12
+        return '-'
       },
       dlTotal () {
-        return 1
+        return '-'
       },
       dlPercent () {
         if (!this.$lodash.isNumber(this.dlTarget) || !this.$lodash.isNumber(this.dlTotal)) {
@@ -107,18 +108,24 @@
       }
     },
     methods: {
-      _init () {
+      __init () {
         let width = this.$jquery(document).width()
         let height = this.$jquery(document).height()
         this.$jquery('body').css('width', width)
         this.$jquery('body').css('height', height)
+        this.$Message.config({
+          top: height / 5,
+          duration: 3
+        })
       }
     },
     mounted () {
-      this._init()
+      this.__init()
     },
     components: {
-      PonitMap
+      heatmap,
+      bar,
+      'v-line': line
     }
   }
 </script>
@@ -192,18 +199,8 @@
               margin-bottom 0
             .bar-wrapper
               width 100%
-              height 100%
-              .bar
-                margin-top 0.5%
-                margin-left 2.5%
-                width 650px
-                height 240px
+              height 250px
             .line-wrapper
               width 100%
-              height 100%
-              .line
-                margin-top 0.5%
-                margin-left 2.5%
-                width 650px
-                height 240px
+              height 250px
 </style>

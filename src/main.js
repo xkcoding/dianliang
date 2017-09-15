@@ -21,7 +21,6 @@ new Vue({
   el: '#app',
   render: h => h(DL),
   data: {
-    eventHub: new Vue(),
-    charts: []
+    eventHub: new Vue()
   }
 })
