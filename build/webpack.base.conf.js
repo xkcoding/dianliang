@@ -16,8 +16,7 @@ module.exports = {
     path: config.build.assetsRoot,
     filename: '[name].js',
     publicPath: process.env.NODE_ENV === 'production'
-      ? './'
-      // config.build.assetsPublicPath
+      ? config.build.assetsPublicPath
       : config.dev.assetsPublicPath
   },
   // 增加一个plugins
