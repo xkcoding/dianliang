@@ -8,6 +8,9 @@ import $ from 'jquery'
 import 'iview/dist/styles/iview.css'    // 使用 CSS
 import 'common/stylus/index.styl'
 
+/* eslint-disable no-unused-vars */
+import mock from './api/mock'
+
 Vue.prototype.$jquery = $
 Vue.prototype.$lodash = lodash
 Vue.prototype.$moment = moment

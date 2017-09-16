@@ -126,7 +126,7 @@
         this._getLine()
       })
       this.$root.eventHub.$on('changeDate', (val) => {
-        this.date = val
+        this.date = val.name
         this._getLine()
       })
       this.$http.get('static/data/line/testData.json').then((res) => {

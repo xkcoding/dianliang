@@ -1,5 +1,5 @@
 <template>
-  <div class="barChart">
+  <div class="barChart" v-if="datas.length > 0">
     <div class="main"></div>
   </div>
 </template>
@@ -7,22 +7,56 @@
 <script>
   import echarts from 'echarts'
 
-  const STATUS_CODE = 200
   export default {
+    props: {
+      datas: {
+        type: Array,
+        default: function () {
+          return []
+        }
+      }
+    },
     data () {
       return {
-        datas: null,
+        selfDatas: {
+          date: [],
+          data: []
+        },
         bar: null,
         province: '全国'
       }
     },
     methods: {
       paintBar () {
-        let options = this._getOptions(this.datas)
+        this.convertData()
+        let options = this._getOptions(this.selfDatas)
         this._initBar(options)
         this.bar.on('click', (params) => {
-          this.$root.eventHub.$emit('changeDate', params.name)
+          this.$root.eventHub.$emit('changeDate', params)
         })
+      },
+      convertData () {
+        this.selfDatas.date = []
+        this.selfDatas.data = []
+        if (this.province === '全国') {
+          this.datas.forEach((val) => {
+            this.selfDatas.date.push(val.date)
+            let total = 0
+            val.data.forEach((data) => {
+              total += data.value
+            })
+            this.selfDatas.data.push(total)
+          })
+        } else {
+          this.datas.forEach((val) => {
+            this.selfDatas.date.push(val.date)
+            val.data.forEach((data) => {
+              if (data.name === this.province) {
+                this.selfDatas.data.push(data.value)
+              }
+            })
+          })
+        }
       },
       _getOptions (datas) {
         return {
@@ -63,7 +97,7 @@
                 color: 'white'
               }
             },
-            data: this.datas.date
+            data: this.selfDatas.date
           }],
           yAxis: [{
             axisLine: {
@@ -101,7 +135,7 @@
               },
               'name': this.province,
               'type': 'bar',
-              'data': this.datas.data,
+              'data': this.selfDatas.data,
               'barWidth': '40%'
             }
           ]
@@ -130,12 +164,7 @@
         this.province = val
         this._getBar()
       })
-      this.$http.get('static/data/bar/testData.json').then((res) => {
-        if (res.status === STATUS_CODE) {
-          this.datas = res.data
-          this._getBar()
-        }
-      })
+      this._getBar()
     }
   }
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <div class="mapChart">
+  <div class="mapChart" v-if="datas">
     <div class="main"></div>
   </div>
 </template>
@@ -34,7 +34,7 @@
   import 'echarts/map/js/province/shanxi'
   import 'echarts/map/js/province/shanxi1'
   import 'echarts/map/js/province/sichuan'
-  //  import 'echarts/map/js/province/taiwan'
+  import 'echarts/map/js/province/taiwan'
   import 'echarts/map/js/province/tianjin'
   import 'echarts/map/js/province/xianggang'
   import 'echarts/map/js/province/xinjiang'
@@ -42,47 +42,61 @@
   import 'echarts/map/js/province/yunnan'
   import 'echarts/map/js/province/zhejiang'
 
-  const STATUS_CODE = 200
   export default {
     name: 'heatmap',
-    props: {},
+    props: {
+      datas: {
+        type: Array,
+        default: function () {
+          return []
+        }
+      }
+    },
     data () {
       return {
         map: null,
-        datas: null
+        selfData: null,
+        dataIndex: 0,
+        province: 'china',
+        date: ''
       }
     },
     methods: {
-      paintChina () {
-        let options = this._getOptions('china', this.datas)
+      paintMap () {
+        let options = this._getOptions(this.province, this.selfData)
         this._initMap(options)
         this.map.on('click', (param) => {
-          let name = this.$lodash.result(this.$lodash.find(this.datas, function (chr) {
-            return chr.name === param.name
-          }), 'name')
-          if (param.name === name) {
-            this.paintProvince(param.name)
-            this.$root.eventHub.$emit('changeProvince', param.name)
+          this.selfData = this.datas[0].data
+          this.date = this.datas[0].date
+          if (this.province === 'china') {
+            let name = this.$lodash.result(this.$lodash.find(this.selfData, function (chr) {
+              return chr.name === param.name
+            }), 'name')
+            if (param.name === name) {
+              this.province = param.name
+              this.paintMap()
+              this.$root.eventHub.$emit('changeProvince', param.name)
+            } else {
+              this.$Message.info(param.name + '省暂时没有风场数据')
+            }
           } else {
-            this.$Message.info(param.name + '省暂时没有风场数据')
+            this.province = 'china'
+            this.paintMap()
+            this.$root.eventHub.$emit('changeProvince', '全国')
           }
-        })
-      },
-      paintProvince (province) {
-        let options = this._getOptions(province, this.datas)
-        this._initMap(options)
-        this.map.on('click', () => {
-          this.paintChina(this.datas)
-          this.$root.eventHub.$emit('changeProvince', '全国')
         })
       },
       convertData (data) {
         let res = []
+        let count = 0
+        data.forEach((val) => {
+          count += val.value
+        })
         for (let i = 0; i < data.length; i++) {
           let geoCoord = {}
           if (geoCoord) {
             geoCoord.name = data[i].name
-            geoCoord.value = Math.round(Math.random() * 2500)
+            geoCoord.value = this.$lodash.round(data[i].value / count, 2)
             res.push(geoCoord)
           }
         }
@@ -92,7 +106,7 @@
         datas = this.convertData(datas)
         return {
           title: {
-            text: (province === 'china' ? '全国' : province) + '发电量热力图',
+            text: this.date + (province === 'china' ? '全国' : province) + '发电量热力图',
             left: 'auto',
             textStyle: {
               color: '#fff',
@@ -101,7 +115,7 @@
           },
           visualMap: {
             min: 0,
-            max: 2500,
+            max: 0.3,
             bottom: 50,
             splitNumber: 5,
             inRange: {
@@ -170,18 +184,27 @@
         }.bind(this))
       },
       _getMap () {
-        this.paintChina()
+        this.paintMap()
       }
     },
     mounted () {
-      this.$http.get('static/data/point/testData.json').then((res) => {
-        if (res.status === STATUS_CODE) {
-          this.datas = res.data
-          this._getMap()
-        }
+      this.$root.eventHub.$on('changeDate', (val) => {
+        this.selfData = this.datas[val.dataIndex].data
+        this.province = val.seriesName === '全国' ? 'china' : val.seriesName
+        this.date = val.name
+        this._getMap()
+        console.log(val)
       })
+      this.selfData = this.datas[this.dataIndex].data
+      this.date = this.datas[this.dataIndex].date
+      this._getMap()
     },
-    watch: {}
+    watch: {
+      datas (val) {
+        this.selfData = val.data
+        this._getMap()
+      }
+    }
   }
 </script>
 

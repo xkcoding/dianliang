@@ -34,21 +34,18 @@
     <div class="content-wrapper">
       <div class="content">
         <div class="map-wrapper">
-          <heatmap></heatmap>
+          <heatmap v-if="datas.length > 0" :datas="datas"></heatmap>
         </div>
       </div>
       <div class="content">
         <div class="chart-wrapper">
           <div class="chart">
             <div class="bar-wrapper">
-              <bar></bar>
+              <bar v-if="datas.length > 0" :datas="datas"></bar>
             </div>
           </div>
           <div class="chart">
             <div class="line-wrapper">
-              <div id="line" class="line">
-                <!--<ve-line height="280px" :data="lineData" :settings="lineOptions"></ve-line>-->
-              </div>
               <v-line></v-line>
             </div>
           </div>
@@ -63,11 +60,13 @@
   import bar from 'components/bar/bar'
   import line from 'components/line/line'
 
+  const STATUS_CODE = 200
   export default {
     name: 'DL',
     data () {
       return {
-        head: '龙源电力'
+        head: '龙源电力',
+        datas: []
       }
     },
     computed: {
@@ -121,6 +120,11 @@
     },
     mounted () {
       this.__init()
+      this.$http.get('/predict').then((res) => {
+        if (res.status === STATUS_CODE) {
+          this.datas = res.data.array
+        }
+      })
     },
     components: {
       heatmap,
