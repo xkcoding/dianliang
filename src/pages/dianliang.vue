@@ -120,6 +120,9 @@
     },
     mounted () {
       this.__init()
+      this.$root.eventHub.$on('changeProvince', (val) => {
+        this.head = val === '全国' ? '龙源电力' : val
+      })
       this.$http.get('/predict').then((res) => {
         if (res.status === STATUS_CODE) {
           this.datas = res.data.array
