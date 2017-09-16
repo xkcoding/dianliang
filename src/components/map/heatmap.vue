@@ -89,6 +89,7 @@
         return res
       },
       _getOptions (province, datas) {
+        datas = this.convertData(datas)
         return {
           title: {
             text: (province === 'china' ? '全国' : province) + '发电量热力图',
@@ -110,53 +111,47 @@
               color: '#fff'
             }
           },
-          geo: {
-            map: province,
-            zoom: province === 'china' ? 1 : 0.8,
-            label: {
-              emphasis: {
-                show: true,
-                color: '#fff'
-              }
-            },
-            itemStyle: {
-              normal: {
-                color: 'rgb(39,107,188)',
-                borderColor: '#fff',
-                borderType: 'solid',
-                borderWidth: 1,
-                shadowBlur: 5,
-                shadowColor: 'black',
-                shadowOffsetX: 0,
-                shadowOffsetY: 0,
-                opacity: 1
-              },
-              emphasis: {
-                color: 'rgb(61,158,211)',
-                borderColor: '#555',
-                borderType: 'solid',
-                borderWidth: 1,
-                shadowBlur: 5,
-                shadowColor: 'black',
-                shadowOffsetX: 0,
-                shadowOffsetY: 0,
-                opacity: 1
-              }
-            }
-          },
           series: [
             {
               name: 'iphone3',
-              type: 'heatmap',
-              coordinateSystem: 'geo',
+              type: 'map',
+              zoom: province === 'china' ? 1 : 0.8,
+              mapType: province,
+              label: {
+                emphasis: {
+                  show: true,
+                  color: '#fff'
+                }
+              },
               roam: false,
               data: datas,
+              zlevel: 0,
+              z: 2,
               blurSize: 20,
               minOpacity: 0,
               itemStyle: {
+                normal: {
+                  color: 'rgb(39,107,188)',
+                  borderColor: '#fff',
+                  borderType: 'solid',
+                  borderWidth: 1,
+                  shadowBlur: 5,
+                  shadowColor: 'black',
+                  shadowOffsetX: 0,
+                  shadowOffsetY: 0,
+                  opacity: 1
+                },
                 emphasis: {
                   areaColor: '#4ba2d0',
-                  color: '#fff'
+                  color: '#fff',
+                  borderColor: '#555',
+                  borderType: 'solid',
+                  borderWidth: 1,
+                  shadowBlur: 5,
+                  shadowColor: 'black',
+                  shadowOffsetX: 0,
+                  shadowOffsetY: 0,
+                  opacity: 1
                 }
               }
             }
