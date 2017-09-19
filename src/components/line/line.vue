@@ -87,14 +87,14 @@
                 fontSize: 14
               }
             },
-            name: '(功率/MW)',
+            name: '(电量/MWh)',
             type: 'value',
             nameTextStyle: {
               color: 'rgba(255, 255, 255, 0.69)'
             }
           }],
           series: [{
-            name: '标签1',
+            name: '电量',
             type: 'line',
             stack: '总量',
             smooth: true,
