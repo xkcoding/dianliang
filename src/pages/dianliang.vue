@@ -34,19 +34,19 @@
     <div class="content-wrapper">
       <div class="content">
         <div class="map-wrapper">
-          <heatmap v-if="datas.length > 0" :datas="datas"></heatmap>
+          <heatmap v-if="heatMapData" :datas="heatMapData"></heatmap>
         </div>
       </div>
       <div class="content">
         <div class="chart-wrapper">
           <div class="chart">
             <div class="bar-wrapper">
-              <bar v-if="datas.length > 0" :datas="datas"></bar>
+              <bar v-if="barData" :datas="barData"></bar>
             </div>
           </div>
           <div class="chart">
             <div class="line-wrapper">
-              <v-line></v-line>
+              <v-line v-if="lineData" :datas="lineData"></v-line>
             </div>
           </div>
         </div>
@@ -66,7 +66,11 @@
     data () {
       return {
         head: '龙源电力',
-        datas: []
+        dlPredict: '-',
+        heatMapData: [],
+        barData: null,
+        lineData: null,
+        date: ''
       }
     },
     computed: {
@@ -101,12 +105,46 @@
         } else {
           return this.$lodash.round(this.dlTotal * 100 / this.dlTarget)
         }
-      },
-      dlPredict () {
-        return 0.5
       }
     },
     methods: {
+      getToday () {
+        return this.$moment().format('YYYY-MM-DD')
+      },
+      __bindAction () {
+        this.$root.eventHub.$on('changeProvince', (val) => {
+          this.head = val === '全国' ? '龙源电力' : val
+          this.date = this.getToday()
+          this.$http.get('http://localhost:8080/wpps/dianliang/heatmap/' + val + '?from=' + this.date).then((res) => {
+            if (res.status === STATUS_CODE) {
+              this.heatMapData = res.data
+            }
+          })
+          this.$http.get('http://localhost:8080/wpps/dianliang/bar/' + val + '?from=' + this.date).then((res) => {
+            if (res.status === STATUS_CODE) {
+              this.barData = res.data
+            }
+          })
+          this.$http.get('http://localhost:8080/wpps/dianliang/line/' + val + '?from=' + this.date).then((res) => {
+            if (res.status === STATUS_CODE) {
+              this.lineData = res.data
+            }
+          })
+        })
+        this.$root.eventHub.$on('changeDate', (val) => {
+          this.date = val.name
+          this.$http.get('http://localhost:8080/wpps/dianliang/heatmap/' + val.seriesName + '?from=' + this.date).then((res) => {
+            if (res.status === STATUS_CODE) {
+              this.heatMapData = res.data
+            }
+          })
+          this.$http.get('http://localhost:8080/wpps/dianliang/line/' + val.seriesName + '?from=' + this.date).then((res) => {
+            if (res.status === STATUS_CODE) {
+              this.lineData = res.data
+            }
+          })
+        })
+      },
       __init () {
         let width = this.$jquery(document).width()
         let height = this.$jquery(document).height()
@@ -116,16 +154,37 @@
           top: height / 5,
           duration: 3
         })
+        this.date = this.getToday()
       }
     },
     mounted () {
       this.__init()
-      this.$root.eventHub.$on('changeProvince', (val) => {
-        this.head = val === '全国' ? '龙源电力' : val
-      })
-      this.$http.get('/predict').then((res) => {
+      this.__bindAction()
+      this.$http.get('http://localhost:8080/wpps/dianliang/dlpredict').then((res) => {
         if (res.status === STATUS_CODE) {
-          this.datas = res.data.array
+          this.dlPredict = res.data
+        } else {
+          this.dlPredict = '-'
+        }
+      }).catch((err) => {
+        if (err) {
+          console.log(err)
+        }
+        this.dlPredict = '-'
+      })
+      this.$http.get('http://localhost:8080/wpps/dianliang/heatmap/全国?from=' + this.date).then((res) => {
+        if (res.status === STATUS_CODE) {
+          this.heatMapData = res.data
+        }
+      })
+      this.$http.get('http://localhost:8080/wpps/dianliang/bar/全国?from=' + this.date).then((res) => {
+        if (res.status === STATUS_CODE) {
+          this.barData = res.data
+        }
+      })
+      this.$http.get('http://localhost:8080/wpps/dianliang/line/全国?from=' + this.date).then((res) => {
+        if (res.status === STATUS_CODE) {
+          this.lineData = res.data
         }
       })
     },

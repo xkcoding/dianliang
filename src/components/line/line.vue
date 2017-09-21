@@ -7,8 +7,15 @@
 <script>
   import echarts from 'echarts'
 
-  const STATUS_CODE = 200
   export default {
+    props: {
+      datas: {
+        type: Object,
+        default: function () {
+          return null
+        }
+      }
+    },
     data () {
       return {
         date: this.getToday(),
@@ -66,7 +73,6 @@
           }],
           yAxis: [{
             min: 0,
-            max: 50,
             axisLine: {
               show: false
             },
@@ -97,18 +103,11 @@
             name: '电量',
             type: 'line',
             stack: '总量',
-            smooth: true,
             data: this.datas.data
           }]
         }
       },
       _initLine (options) {
-        this.$jquery('.lineChart .main').empty()
-        if (this.line) {
-          this.line.dispose()
-        }
-        // 基于准备好的dom，初始化echarts实例
-        this.line = echarts.init(this.$jquery('.lineChart .main')[0])
         this.line.setOption(options)
         window.addEventListener('resize', function () {
           this.line.resize()
@@ -116,25 +115,37 @@
       },
       _getLine () {
         this.paintLine()
+      },
+      __bindAction () {
+        this.$root.eventHub.$on('changeProvince', (val) => {
+          this.province = val
+          this.date = this.getToday()
+          this._getLine()
+        })
+        this.$root.eventHub.$on('changeDate', (val) => {
+          this.date = val.name
+          this._getLine()
+        })
+      },
+      __init () {
+        this.$jquery('.lineChart .main').empty()
+        if (this.line) {
+          this.line.dispose()
+        }
+        // 基于准备好的dom，初始化echarts实例
+        this.line = echarts.init(this.$jquery('.lineChart .main')[0])
       }
     },
     components: {},
     mounted () {
-      this.$root.eventHub.$on('changeProvince', (val) => {
-        this.province = val
-        this.date = this.getToday()
+      this.__init()
+      this.__bindAction()
+      this._getLine()
+    },
+    watch: {
+      datas (val) {
         this._getLine()
-      })
-      this.$root.eventHub.$on('changeDate', (val) => {
-        this.date = val.name
-        this._getLine()
-      })
-      this.$http.get('static/data/line/testData.json').then((res) => {
-        if (res.status === STATUS_CODE) {
-          this.datas = res.data
-          this._getLine()
-        }
-      })
+      }
     }
   }
 </script>

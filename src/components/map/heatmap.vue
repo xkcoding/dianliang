@@ -1,5 +1,5 @@
 <template>
-  <div class="mapChart" v-if="datas">
+  <div class="mapChart">
     <div class="main"></div>
   </div>
 </template>
@@ -55,21 +55,21 @@
     data () {
       return {
         map: null,
-        selfData: null,
-        dataIndex: 0,
         province: 'china',
         date: ''
       }
     },
     methods: {
+      getToday () {
+        return this.$moment().format('YYYY-MM-DD')
+      },
       paintMap () {
-        let options = this._getOptions(this.province, this.selfData)
+        let options = this._getOptions(this.province, this.datas)
         this._initMap(options)
         this.map.on('click', (param) => {
-          this.selfData = this.datas[0].data
-          this.date = this.datas[0].date
+          this.date = this.getToday()
           if (this.province === 'china') {
-            let name = this.$lodash.result(this.$lodash.find(this.selfData, function (chr) {
+            let name = this.$lodash.result(this.$lodash.find(this.datas, function (chr) {
               return chr.name === param.name
             }), 'name')
             if (param.name === name) {
@@ -103,7 +103,6 @@
         return res
       },
       _getOptions (province, datas) {
-        datas = this.convertData(datas)
         return {
           title: {
             text: this.date + (province === 'china' ? '全国' : province) + '发电量热力图',
@@ -112,6 +111,9 @@
               color: '#fff',
               fontWeight: 100
             }
+          },
+          tooltip: {
+            show: true
           },
           visualMap: {
             min: 0,
@@ -127,7 +129,7 @@
           },
           series: [
             {
-              name: 'iphone3',
+              name: '电量',
               type: 'map',
               zoom: province === 'china' ? 1 : 0.8,
               mapType: province,
@@ -183,25 +185,24 @@
           this.map.resize()
         }.bind(this))
       },
+      __bindAction () {
+        this.$root.eventHub.$on('changeDate', (val) => {
+          this.province = val.seriesName === '全国' ? 'china' : val.seriesName
+          this.date = val.name
+          this._getMap()
+        })
+      },
       _getMap () {
         this.paintMap()
       }
     },
     mounted () {
-      this.$root.eventHub.$on('changeDate', (val) => {
-        this.selfData = this.datas[val.dataIndex].data
-        this.province = val.seriesName === '全国' ? 'china' : val.seriesName
-        this.date = val.name
-        this._getMap()
-        console.log(val)
-      })
-      this.selfData = this.datas[this.dataIndex].data
-      this.date = this.datas[this.dataIndex].date
+      this.__bindAction()
+      this.date = this.getToday()
       this._getMap()
     },
     watch: {
       datas (val) {
-        this.selfData = val.data
         this._getMap()
       }
     }

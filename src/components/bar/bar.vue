@@ -1,5 +1,5 @@
 <template>
-  <div class="barChart" v-if="datas.length > 0">
+  <div class="barChart">
     <div class="main"></div>
   </div>
 </template>
@@ -10,55 +10,27 @@
   export default {
     props: {
       datas: {
-        type: Array,
+        type: Object,
         default: function () {
-          return []
+          return null
         }
       }
     },
     data () {
       return {
-        selfDatas: {
-          date: [],
-          data: []
-        },
         bar: null,
         province: '全国'
       }
     },
     methods: {
       paintBar () {
-        this.convertData()
-        let options = this._getOptions(this.selfDatas)
+        let options = this._getOptions()
         this._initBar(options)
         this.bar.on('click', (params) => {
           this.$root.eventHub.$emit('changeDate', params)
         })
       },
-      convertData () {
-        this.selfDatas.date = []
-        this.selfDatas.data = []
-        if (this.province === '全国') {
-          this.datas.forEach((val) => {
-            this.selfDatas.date.push(val.date)
-            let total = 0
-            val.data.forEach((data) => {
-              total += data.value
-            })
-            this.selfDatas.data.push(total)
-          })
-        } else {
-          this.datas.forEach((val) => {
-            this.selfDatas.date.push(val.date)
-            val.data.forEach((data) => {
-              if (data.name === this.province) {
-                this.selfDatas.data.push(data.value)
-              }
-            })
-          })
-        }
-      },
-      _getOptions (datas) {
+      _getOptions () {
         return {
           title: {
             text: this.province + '未来7天发电量预测',
@@ -97,7 +69,7 @@
                 color: 'white'
               }
             },
-            data: this.selfDatas.date
+            data: this.datas.date
           }],
           yAxis: [{
             axisLine: {
@@ -135,7 +107,7 @@
               },
               'name': this.province,
               'type': 'bar',
-              'data': this.selfDatas.data,
+              'data': this.datas.data,
               'barWidth': '40%'
             }
           ]
@@ -143,12 +115,6 @@
         }
       },
       _initBar (options) {
-        this.$jquery('.barChart .main').empty()
-        if (this.bar) {
-          this.bar.dispose()
-        }
-        // 基于准备好的dom，初始化echarts实例
-        this.bar = echarts.init(this.$jquery('.barChart .main')[0])
         this.bar.setOption(options)
         window.addEventListener('resize', function () {
           this.bar.resize()
@@ -156,15 +122,32 @@
       },
       _getBar () {
         this.paintBar()
+      },
+      __bindAction () {
+        this.$root.eventHub.$on('changeProvince', (val) => {
+          this.province = val
+          this._getBar()
+        })
+      },
+      __init () {
+        this.$jquery('.barChart .main').empty()
+        if (this.bar) {
+          this.bar.dispose()
+        }
+        // 基于准备好的dom，初始化echarts实例
+        this.bar = echarts.init(this.$jquery('.barChart .main')[0])
       }
     },
     components: {},
     mounted () {
-      this.$root.eventHub.$on('changeProvince', (val) => {
-        this.province = val
-        this._getBar()
-      })
+      this.__init()
+      this.__bindAction()
       this._getBar()
+    },
+    watch: {
+      datas (val) {
+        this._getBar()
+      }
     }
   }
 </script>
