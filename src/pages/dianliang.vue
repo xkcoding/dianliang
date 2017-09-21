@@ -61,6 +61,7 @@
   import line from 'components/line/line'
 
   const STATUS_CODE = 200
+  const BASE_URL = 'http://localhost:8080'
   export default {
     name: 'DL',
     data () {
@@ -160,7 +161,7 @@
     mounted () {
       this.__init()
       this.__bindAction()
-      this.$http.get('http://localhost:8080/wpps/dianliang/dlpredict').then((res) => {
+      this.$http.get(BASE_URL + '/wpps/dianliang/dlpredict').then((res) => {
         if (res.status === STATUS_CODE) {
           this.dlPredict = res.data
         } else {
@@ -172,17 +173,17 @@
         }
         this.dlPredict = '-'
       })
-      this.$http.get('http://localhost:8080/wpps/dianliang/heatmap/全国?from=' + this.date).then((res) => {
+      this.$http.get(BASE_URL + '/wpps/dianliang/heatmap/全国?from=' + this.date).then((res) => {
         if (res.status === STATUS_CODE) {
           this.heatMapData = res.data
         }
       })
-      this.$http.get('http://localhost:8080/wpps/dianliang/bar/全国?from=' + this.date).then((res) => {
+      this.$http.get(BASE_URL + '/wpps/dianliang/bar/全国?from=' + this.date).then((res) => {
         if (res.status === STATUS_CODE) {
           this.barData = res.data
         }
       })
-      this.$http.get('http://localhost:8080/wpps/dianliang/line/全国?from=' + this.date).then((res) => {
+      this.$http.get(BASE_URL + '/wpps/dianliang/line/全国?from=' + this.date).then((res) => {
         if (res.status === STATUS_CODE) {
           this.lineData = res.data
         }
