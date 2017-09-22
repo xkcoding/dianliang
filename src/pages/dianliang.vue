@@ -52,6 +52,16 @@
         </div>
       </div>
     </div>
+    <div class="toggle-wrapper">
+      <div class="to-heatmap" @click="toHeatMap">
+        <Icon type="earth"></Icon>
+        切换到热力图
+      </div>
+      <div class="to-classic" @click="toClassic">
+        <Icon type="stats-bars"></Icon>
+        切换到经典模式
+      </div>
+    </div>
   </div>
 </template>
 
@@ -109,6 +119,12 @@
       }
     },
     methods: {
+      toHeatMap () {
+        window.location.href = 'index.html'
+      },
+      toClassic () {
+        window.location.href = 'classic-index.html'
+      },
       getToday () {
         return this.$moment().format('YYYY-MM-DD')
       },
@@ -270,4 +286,37 @@
             .line-wrapper
               width 100%
               height 250px
+    .toggle-wrapper
+      font-size 12px
+      text-align center
+      .to-heatmap
+        position fixed
+        cursor pointer
+        top 40%
+        left -105px
+        width 120px
+        height 30px
+        background-color rgb(82, 173, 164)
+        background-size 20px 20px
+        background-position 8px 8px
+        line-height 30px
+        border-radius 15px
+        z-index 9999
+        &:hover
+          margin-left 100px
+      .to-classic
+        position fixed
+        cursor pointer
+        top 46%
+        left -105px
+        width 120px
+        height 30px
+        background-color rgb(82, 173, 164)
+        background-size 20px 20px
+        background-position 8px 8px
+        line-height 30px
+        border-radius 15px
+        z-index 9999
+        &:hover
+          margin-left 100px
 </style>
