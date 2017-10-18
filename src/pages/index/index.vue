@@ -1,6 +1,6 @@
 <template>
   <div class="page">
-    <v-header :head="head"></v-header>
+    <v-header :title="head"></v-header>
     <div class="content-wrapper">
       <div class="content">
         <div class="map-wrapper">
@@ -8,7 +8,7 @@
         </div>
       </div>
       <div class="fd-content">
-        <bulletin></bulletin>
+        <bulletin :province="province"></bulletin>
       </div>
     </div>
     <div class="toggle-wrapper">
@@ -38,6 +38,7 @@
     data () {
       return {
         head: '龙源电力',
+        province: '全国',
         heatMapData: [],
         barData: null,
         lineData: null,

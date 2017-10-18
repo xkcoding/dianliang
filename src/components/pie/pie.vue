@@ -9,10 +9,15 @@
 
   export default {
     name: 'pie',
+    props: {
+      province: {
+        type: String,
+        default: '全国'
+      }
+    },
     data () {
       return {
         pie: null,
-        province: '全国',
         datas: []
       }
     },

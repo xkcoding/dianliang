@@ -67,23 +67,30 @@
         let options = this._getOptions(this.province, this.datas)
         this._initMap(options)
         this.map.on('click', (param) => {
-          this.date = this.getToday()
-          if (this.province === 'china') {
-            let name = this.$lodash.result(this.$lodash.find(this.datas, function (chr) {
-              return chr.name === param.name
-            }), 'name')
-            if (param.name === name) {
-              this.province = param.name
-              this.paintMap()
-              this.$root.eventHub.$emit('changeProvince', param.name)
-            } else {
-              this.$Message.info(param.name + '省暂时没有风场数据')
+          this.$router.push({
+            name: 'province',
+            params: {
+              province: param.name
             }
-          } else {
-            this.province = 'china'
-            this.paintMap()
-            this.$root.eventHub.$emit('changeProvince', '全国')
-          }
+          })
+//          this.date = this.getToday()
+//          if (this.province === 'china') {
+//            let name = this.$lodash.result(this.$lodash.find(this.datas, function (chr) {
+//              return chr.name === param.name
+//            }), 'name')
+//            if (param.name === name) {
+//              this.province = param.name
+//              this.paintMap()
+//              this.$root.eventHub.$emit('changeProvince', param.name)
+//              this.$router.push({name: 'province'})
+//            } else {
+//              this.$Message.info(param.name + '省暂时没有风场数据')
+//            }
+//          } else {
+//            this.province = 'china'
+//            this.paintMap()
+//            this.$root.eventHub.$emit('changeProvince', '全国')
+//          }
         })
       },
       convertData (data) {

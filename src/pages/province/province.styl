@@ -1,0 +1,53 @@
+.page
+  color #fff
+  .content-wrapper
+    display flex
+    margin 2%
+    .content
+      flex 3
+      height 100%
+      .chart-wrapper
+        display flex
+        flex-direction column
+        height 100%
+        .chart
+          flex 1
+          margin-bottom 2%
+          border 1px solid #fff
+          &:last-child
+            margin-bottom 0
+    .fd-content
+      flex 1
+  .toggle-wrapper
+    font-size 12px
+    text-align center
+    .to-heatmap
+      position fixed
+      cursor pointer
+      top 40%
+      left -105px
+      width 120px
+      height 30px
+      background-color rgb(82, 173, 164)
+      background-size 20px 20px
+      background-position 8px 8px
+      line-height 30px
+      border-radius 15px
+      z-index 9999
+      &:hover
+        margin-left 100px
+    .to-classic
+      position fixed
+      cursor pointer
+      top 46%
+      left -105px
+      width 120px
+      height 30px
+      background-color rgb(82, 173, 164)
+      background-size 20px 20px
+      background-position 8px 8px
+      line-height 30px
+      border-radius 15px
+      z-index 9999
+      &:hover
+        margin-left 100px

@@ -4,7 +4,7 @@
       <img src="../../images/logo.png" width="55" height="55" alt="logo">
     </div>
     <div class="logo-name">龙源电力集团股份有限公司</div>
-    <div class="page-name">{{head}}-风电场功率预测电量管理平台</div>
+    <div class="page-name">{{title}}-风电场功率预测电量管理平台</div>
   </div>
 </template>
 
@@ -12,7 +12,7 @@
   export default {
     name: 'header',
     props: {
-      head: {
+      title: {
         type: String,
         default: '龙源电力'
       }

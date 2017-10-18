@@ -33,13 +33,13 @@
         </Progress>
       </div>
     </div>
-    <div class="fd-detail">
+    <div class="fd-detail tomorrow" @click="toChart">
       <div class="detail">明日预测电量: <span class="highlight"><span
         class="number icon-">{{tomorrowPredict}}</span>亿千瓦时</span>
       </div>
     </div>
     <div class="fd-top">
-      <pie></pie>
+      <pie :province="province"></pie>
     </div>
   </div>
 </template>
@@ -53,6 +53,12 @@
     name: 'bulletin',
     components: {
       pie
+    },
+    props: {
+      province: {
+        type: String,
+        default: '全国'
+      }
     },
     data () {
       return {
@@ -98,6 +104,14 @@
         } else {
           return this.$lodash.round(small * 100 / big)
         }
+      },
+      toChart () {
+        this.$router.push({
+          name: 'chart',
+          params: {
+            province: this.province
+          }
+        })
       },
       getData () {
         this.$http.get(BASE_URL + '/wpps/dianliang/dlpredict').then((res) => {
