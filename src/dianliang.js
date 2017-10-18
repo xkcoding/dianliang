@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import DL from 'pages/dianliang'
+import DL from 'pages/index/index'
 import iView from 'iview'
 import lodash from 'lodash'
 import moment from 'moment'

@@ -8,6 +8,7 @@
   import echarts from 'echarts'
 
   export default {
+    name: 'bar',
     props: {
       datas: {
         type: Object,
@@ -100,15 +101,32 @@
           }],
           series: [
             {
-              'itemStyle': {
-                emphasis: {
-                  color: '#ff8f23'
-                }
-              },
               'name': this.province,
               'type': 'bar',
               'data': this.datas.data,
-              'barWidth': '40%'
+              'barWidth': '40%',
+              itemStyle: {
+                emphasis: {
+                  barBorderRadius: 7,
+                  color: new echarts.graphic.LinearGradient(
+                    0, 0, 0, 1,
+                    [
+                      {offset: 0, color: '#ff8f23'},
+                      {offset: 1, color: '#ffbc23'}
+                    ]
+                  )
+                },
+                normal: {
+                  barBorderRadius: 7,
+                  color: new echarts.graphic.LinearGradient(
+                    0, 0, 0, 1,
+                    [
+                      {offset: 0, color: '#3977E6'},
+                      {offset: 1, color: '#37BBF8'}
+                    ]
+                  )
+                }
+              }
             }
           ]
 
@@ -153,10 +171,6 @@
 </script>
 
 <style lang="stylus" scoped>
-  .barChart
-    height 280px
-    .main
-      width 100%
-      height 100%
+  @import "./bar.styl"
 </style>
 

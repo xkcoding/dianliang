@@ -119,6 +119,7 @@
             min: 0,
             max: 0.3,
             bottom: 50,
+            left: 50,
             splitNumber: 5,
             inRange: {
               color: ['#0d87d0', '#2283e9', '#1567bb', '#0b55b4', '#1e436f']
@@ -210,9 +211,5 @@
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus" scoped>
-  .mapChart
-    height 500px
-    .main
-      width 100%
-      height 100%
+  @import "./heatmap.styl"
 </style>

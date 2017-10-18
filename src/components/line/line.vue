@@ -151,9 +151,5 @@
 </script>
 
 <style lang="stylus" scoped>
-  .lineChart
-    height 280px
-    .main
-      width 100%
-      height 100%
+  @import "./line.styl"
 </style>
